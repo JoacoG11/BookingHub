@@ -1,9 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Booking.Domain.Entities;
 using Booking.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
+
+// alias claro para la entidad Booking
 using BookingEntity = Booking.Domain.Entities.Booking;
 
 namespace Booking.Infrastructure.Persistence;
@@ -17,38 +16,46 @@ public class BookingRepository : IBookingRepository
         _context = context;
     }
 
-    public async Task<BookingEntity?> GetByIdAsync(Guid id)
+    public async Task<BookingEntity> GetByIdAsync(Guid id)
     {
         return await _context.Bookings
-            .Include(b => b.User)
-            .Include(b => b.Resource)
-            .FirstOrDefaultAsync(b => b.Id == id);
+            .AsNoTracking()
+            .FirstOrDefaultAsync(b => b.Id == id)
+            ?? throw new KeyNotFoundException($"Booking {id} not found");
     }
 
     public async Task<IReadOnlyList<BookingEntity>> GetByUserAsync(Guid userId)
     {
         return await _context.Bookings
-            .Where(b => b.UserId == userId)
+            .AsNoTracking()
+            .Where(b => b.UserId == userId)   // 👈 importante: solo filtramos por UserId
+            .OrderByDescending(b => b.StartTime)
             .ToListAsync();
     }
 
-    public async Task<IReadOnlyList<BookingEntity>> GetByResourceAndRangeAsync(Guid resourceId, DateTime from, DateTime to)
+    public async Task<IReadOnlyList<BookingEntity>> GetByResourceAndRangeAsync(
+        Guid resourceId,
+        DateTime from,
+        DateTime to)
     {
         return await _context.Bookings
-            .Where(b => b.ResourceId == resourceId &&
-                        b.StartTime < to &&
-                        b.EndTime > from)
+            .AsNoTracking()
+            .Where(b =>
+                b.ResourceId == resourceId &&
+                b.StartTime < to &&
+                b.EndTime   > from)
             .ToListAsync();
     }
 
     public async Task AddAsync(BookingEntity booking)
     {
-        await _context.Bookings.AddAsync(booking);
+        _context.Bookings.Add(booking);
+        await _context.SaveChangesAsync();   // 👈 aseguramos el INSERT
     }
 
-    public Task UpdateAsync(BookingEntity booking)
+    public async Task UpdateAsync(BookingEntity booking)
     {
         _context.Bookings.Update(booking);
-        return Task.CompletedTask;
+        await _context.SaveChangesAsync();   // 👈 aseguramos el UPDATE
     }
 }

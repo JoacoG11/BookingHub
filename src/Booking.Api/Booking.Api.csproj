@@ -7,8 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- Necesario para el soporte OpenAPI básico -->
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.1" />
 
     <!-- Necesario para AddSwaggerGen, UseSwagger, UseSwaggerUI -->
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.3" />

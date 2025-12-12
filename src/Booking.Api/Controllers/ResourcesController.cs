@@ -1,9 +1,12 @@
 using Booking.Application.Resources;
 using Booking.Application.Resources.Dtos;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace Booking.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class ResourcesController : ControllerBase

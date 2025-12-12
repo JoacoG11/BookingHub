@@ -1,0 +1,12 @@
+services:
+  bookinghub-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "7778:8080"  
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Data Source=/data/booking.db
+    volumes:
+      - ./data:/data

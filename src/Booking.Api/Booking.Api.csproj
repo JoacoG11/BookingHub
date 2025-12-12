@@ -9,7 +9,10 @@
   <ItemGroup>
 
     <!-- Necesario para AddSwaggerGen, UseSwagger, UseSwaggerUI -->
+    <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.3" />
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.1" />
+  <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.1" />
   </ItemGroup>
 
   <ItemGroup>

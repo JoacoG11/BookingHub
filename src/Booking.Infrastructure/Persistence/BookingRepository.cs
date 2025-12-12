@@ -21,7 +21,6 @@ public class BookingRepository : IBookingRepository
         return await _context.Bookings
             .AsNoTracking()
             .FirstOrDefaultAsync(b => b.Id == id)
-            ?? throw new KeyNotFoundException($"Booking {id} not found");
     }
 
     public async Task<IReadOnlyList<BookingEntity>> GetByUserAsync(Guid userId)

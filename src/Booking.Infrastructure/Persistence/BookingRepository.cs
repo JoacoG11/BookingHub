@@ -1,4 +1,3 @@
-using Booking.Domain.Entities;
 using Booking.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,18 +15,18 @@ public class BookingRepository : IBookingRepository
         _context = context;
     }
 
-    public async Task<BookingEntity> GetByIdAsync(Guid id)
+    public async Task<BookingEntity?> GetByIdAsync(Guid id)
     {
         return await _context.Bookings
             .AsNoTracking()
-            .FirstOrDefaultAsync(b => b.Id == id)
+            .FirstOrDefaultAsync(b => b.Id == id);
     }
 
     public async Task<IReadOnlyList<BookingEntity>> GetByUserAsync(Guid userId)
     {
         return await _context.Bookings
             .AsNoTracking()
-            .Where(b => b.UserId == userId)   // 👈 importante: solo filtramos por UserId
+            .Where(b => b.UserId == userId)
             .OrderByDescending(b => b.StartTime)
             .ToListAsync();
     }
@@ -42,19 +41,19 @@ public class BookingRepository : IBookingRepository
             .Where(b =>
                 b.ResourceId == resourceId &&
                 b.StartTime < to &&
-                b.EndTime   > from)
+                b.EndTime > from)
             .ToListAsync();
     }
 
     public async Task AddAsync(BookingEntity booking)
     {
         _context.Bookings.Add(booking);
-        await _context.SaveChangesAsync();   // 👈 aseguramos el INSERT
+        await _context.SaveChangesAsync();
     }
 
     public async Task UpdateAsync(BookingEntity booking)
     {
         _context.Bookings.Update(booking);
-        await _context.SaveChangesAsync();   // 👈 aseguramos el UPDATE
+        await _context.SaveChangesAsync();
     }
 }

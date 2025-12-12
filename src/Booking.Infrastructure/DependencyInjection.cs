@@ -12,11 +12,12 @@ public static class DependencyInjection
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        // Tomamos el connection string del appsettings.json
+        // Tomamos el connection string del appsettings
         var connectionString =
             configuration.GetConnectionString("DefaultConnection")
-            ?? "Data Source=booking.db"; // fallback por si acaso
+            ?? "Data Source=booking.db"; // fallback local
 
+        // SQLite
         services.AddDbContext<AppDbContext>(options =>
             options.UseSqlite(connectionString));
 

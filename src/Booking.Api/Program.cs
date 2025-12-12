@@ -1,7 +1,9 @@
 using Booking.Application;
 using Booking.Infrastructure;
-using Booking.Infrastructure.Persistence;  // <-- NUEVO
+using Booking.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Booking.Api.Middleware;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddTransient<ExceptionHandlingMiddleware>();
+
 
 // Registrar capas
 builder.Services.AddApplication();
@@ -31,6 +35,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.MapControllers();
 

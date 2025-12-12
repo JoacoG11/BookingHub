@@ -6,7 +6,7 @@ using BookingEntity = Booking.Domain.Entities.Booking;
 
 public interface IBookingRepository
 {
-    Task<BookingEntity?> GetByIdAsync(Guid id);   // ← Ahora permite null
+    Task<BookingEntity?> GetByIdAsync(Guid id);
 
     Task<IReadOnlyList<BookingEntity>> GetByUserAsync(Guid userId);
 

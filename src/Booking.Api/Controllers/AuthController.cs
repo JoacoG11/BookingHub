@@ -18,16 +18,24 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
-    public IActionResult Login([FromBody] LoginRequest request)
-    {
-        // A efectos de desarrollo: no valida credenciales reales
-        if (string.IsNullOrWhiteSpace(request.Email))
-            return BadRequest("Email is required");
+public async Task<IActionResult> Login(
+    [FromBody] LoginRequest request,
+    [FromServices] IUserService userService,
+    CancellationToken cancellationToken)
+{
+    var user = await userService.GetByEmailAsync(request.Email, cancellationToken);
+    if (user is null)
+        return Unauthorized("Invalid credentials");
 
-        var token = GenerateJwtToken(request.Email);
+    // Validar password
+    var userEntity = await userService.GetEntityByEmailAsync(request.Email, cancellationToken); // nuevo método en IUserService
+    if (!BCrypt.Net.BCrypt.Verify(request.Password, userEntity.PasswordHash))
+        return Unauthorized("Invalid credentials");
 
-        return Ok(new { token });
-    }
+    var token = GenerateJwtToken(user.Email);
+    return Ok(new { token });
+}
+
 
     private string GenerateJwtToken(string email)
     {

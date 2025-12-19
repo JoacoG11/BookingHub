@@ -31,4 +31,35 @@ public class UserService : IUserService
 
         return new UserDto(user.Id, user.Name, user.Email);
     }
+
+    public async Task RegisterAsync(RegisterUserRequest request, CancellationToken cancellationToken)
+{
+    var existingUser = await _userRepository.GetByEmailAsync(request.Email, cancellationToken);
+    if (existingUser != null)
+        throw new Exception("Email already registered");
+
+    var hashedPassword = BCrypt.Net.BCrypt.HashPassword(request.Password);
+
+    var newUser = new User
+    {
+        Id = Guid.NewGuid(),
+        Email = request.Email,
+        PasswordHash = hashedPassword,
+        Role = "User",
+        CreatedAt = DateTime.UtcNow
+    };
+
+    await _userRepository.CreateAsync(newUser, cancellationToken);
+}
+
+public async Task<User> GetEntityByEmailAsync(string email, CancellationToken cancellationToken)
+{
+    var user = await _userRepository.GetByEmailAsync(email, cancellationToken);
+    if (user is null)
+        throw new Exception("User not found");
+
+    return user;
+}
+
+
 }

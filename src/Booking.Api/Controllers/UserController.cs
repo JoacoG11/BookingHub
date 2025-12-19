@@ -36,4 +36,15 @@ public class UsersController : ControllerBase
         var user = await _userService.GetByEmailAsync(email, cancellationToken);
         return Ok(user);
     }
+
+    [AllowAnonymous]
+    [HttpPost("register")]
+    public async Task<IActionResult> Register(
+        [FromBody] RegisterUserRequest request,
+        CancellationToken cancellationToken)
+    {
+        await _userService.RegisterAsync(request, cancellationToken);
+        return Ok(new { message = "User registered successfully." });
+    }
+
 }

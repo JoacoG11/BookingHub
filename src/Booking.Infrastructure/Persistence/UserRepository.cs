@@ -30,4 +30,11 @@ public class UserRepository : IUserRepository
     {
         await _context.Users.AddAsync(user, cancellationToken);
     }
+
+    public async Task<bool> ExistsByEmailAsync(string email, CancellationToken cancellationToken = default)
+{
+    return await _context.Users
+        .AnyAsync(u => u.Email.ToLower() == email.ToLower(), cancellationToken);
+}
+
 }
